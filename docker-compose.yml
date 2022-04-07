@@ -1,0 +1,35 @@
+version: "3"
+services:
+  server:
+    build: ./
+    environment:
+      GREETING_MESSAGE: Hello
+      PORT: ":3000"
+      DB_USERNAME: root
+      DB_PASSWORD: password
+      DB_HOSTNAME: mysql
+      DB_DATABASE: test
+      DB_PORT: "3306"
+    depends_on:
+     - mysql
+    restart: always
+  nginx:
+    image: nginx
+    ports:
+      - "80:80" # 自分の利用するポートに応じて変更してください
+    volumes:
+      - ./nginx/conf.d/:/etc/nginx/conf.d
+  mysql:
+    image: mariadb:latest
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: test
+    ports:
+      - 3306
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+      - ./sql:/docker-entrypoint-initdb.d
+    restart: always
+
+    
